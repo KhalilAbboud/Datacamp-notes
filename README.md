@@ -14,9 +14,9 @@ This repo is meant to be:
 ## 📚 Table of Contents
 
 ### 🔵 Python
--introduction to python
--intermediate python
--Data manipulations with panda
+- introduction to python
+- intermediate python
+- Data manipulations with panda
 
 ### 🟠 SQL
 - introduction to sql
