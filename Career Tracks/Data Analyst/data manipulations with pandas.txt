@@ -1,0 +1,407 @@
+=========data manipulaion with pandas======
+
+reminder for Dataframes, kinda eh but very usefull:
+
+# we have a dataframe called dogs
+print(dogs.head()) => print the first 4 rows
+print(dogs.info()) => info about each row
+print(dogs.shape) => gives number of rows and columns
+print(dogs.describe()) => numerical values
+print(dogs.values) => access data a 2d numpy array
+print(dogs.columns) => acess columns data as a numpy array
+print(dogs.index) => something printing eh
+
+--sorting:
+
+dogs.sort_values("(comumn name)") => sort based on a column
+dogs.sort_values("(comumn name)", ascending=false)
+dogs.sort_values("(comumn name)", "(column name2)") => multiple columns sorting
+dogs.sort_values(["comumn name", "column name2"], ascending=[false,true])
+
+--subsetting:
+
+dogs["name"] => subset 1 single column
+dogs[["name", "breed"]] => subset by multiple columns
+dogs["heigh_cm"] > 50 => subset using logical comparison, resulting in a 2d array of booleans
+dogs[dogs["heigh_cm"] > 50] => a subseted dataframe result 
+
+is_lab = dogs["breed"] == "labrador"
+is_brown = dogs["color"] == "Brown"
+dogs[is_lab & is_brown] 
+===> subset based on multiple conditiions
+or use isin() method like:
+is_black_or_brown = dogs["color"].isin(["brown", "black"])
+
+exemple of this one above:
+# The Mojave Desert states
+canu = ["California", "Arizona", "Nevada", "Utah"]
+
+# Filter for rows in the Mojave Desert states
+mojave_homelessness = homelessness[homelessness["state"].isin(canu)]
+
+# See the result
+print(mojave_homelessness)
+
+how to add new columns:
+dogs["height_m"] = dogs["height_cm"] / 100
+we add bmi:
+dogs["bmi"] = dogs["weight_kg"] / dogs["height_m"] ** 2
+bmi_lt_100 = dogs[dogs["bmi"] < 100]
+bmi_lt_100_height = bmi_lt_100.sort_values("height_cm", ascending=False)
+bmi_lt_100_height[["name", "height_cm", "bmi"]] ## this is to sort tallests dawgs
+
+small exemple:
+# Create indiv_per_10k col as homeless individuals per 10k state pop
+homelessness["indiv_per_10k"] = 10000 * homelessness["individuals"] / homelessness["state_pop"] 
+
+# Subset rows for indiv_per_10k greater than 20
+high_homelessness = homelessness[homelessness["indiv_per_10k"] > 20]
+
+# Sort high_homelessness by descending indiv_per_10k
+high_homelessness_srt = high_homelessness.sort_values("indiv_per_10k", ascending=False)
+
+# From high_homelessness_srt, select the state and indiv_per_10k cols
+result = high_homelessness_srt[["state", "indiv_per_10k"]]
+
+# See the result
+print(result)
+
+--statistics eh:
+
+dogs["height_cm"].mean()  ## there is also .median() and .mode() & .min() .max() & .var() .std() and .quantile()
+
+.agg() ? can be used like this: .agg(pct30) or .agg([pct30, pct40])
+
+cumulative sum => dogs["height_cm"].cumsum()
+there is also other cumulative methods: cummax, cummin and cumprod
+
+
+---counting:
+doping dupes:
+dogs.drop_duplicates(subset="name")  #by one column
+dogs.drop_duplicates(subset=["name", "breed"]) #by 2 or more columns
+
+to actually count:
+dogs["breed"].value_counts() /or/ dogs["breed"].value_counts(sort=True)
+to make proportion:
+dogs["breed"].value_counts(normalize=True)
+
+==>a small exemple of subsetting:
+# Drop duplicate store/type combinations
+store_types = sales.drop_duplicates(subset=["store", "type"])
+print(store_types.head())
+
+# Drop duplicate store/department combinations
+store_depts = sales.drop_duplicates(subset=["store", "department"])
+print(store_depts.head())
+
+# Subset the rows where is_holiday is True and drop duplicate dates
+holiday_dates = sales[sales["is_holiday"] == True].drop_duplicates(subset="date")
+
+# Print date col of holiday_dates
+print(holiday_dates["date"])
+
+===>exemple of sorting and proportion sorting:
+# Count the number of stores of each type
+store_counts = store_types["type"].value_counts()
+print(store_counts)
+
+# Get the proportion of stores of each type
+store_props = store_types["type"].value_counts(normalize=True)
+print(store_props)
+
+# Count the number of stores for each department and sort
+dept_counts_sorted = store_depts["department"].value_counts(sort=True)
+print(dept_counts_sorted)
+
+# Get the proportion of stores in each department and sort
+dept_props_sorted = store_depts["department"].value_counts(sort=True, normalize=True)
+print(dept_props_sorted)
+
+--Grouped summary statistics:
+
+dogs.groupby("color")["weight_kg"].mean()
+==>this is groups dogs by color and calculate the mean of each one
+
+->combined with .agg() we get:
+dogs.groupby("color")["weight_kg"].agg([min, max, sum])
+/or/ dogs.groupby("color")["weight_kg"].agg(["min","max","mean","median"])
+
+dogs.groupby(["color", "breed"])["weight_kg"].mean()  //=> mutliple grouping by color adn breed
+dogs.groupby("color")[["weight_kg", "height_cm"]].mean() //=> multiple everything 
+
+
+#==>exemple of subsetting + total calc using .agg(sum):
+# Calc total weekly sales
+sales_all = sales["weekly_sales"].agg(sum)
+
+# Subset for type A stores, calc total weekly sales
+sales_A = sales[sales["type"] == "A"]["weekly_sales"].agg(sum)
+
+# Subset for type B stores, calc total weekly sales
+sales_B = sales[sales["type"] == "B"]["weekly_sales"].agg(sum)
+
+# Subset for type C stores, calc total weekly sales
+sales_C = sales[sales["type"] == "C"]["weekly_sales"].agg(sum)
+
+# Get proportion for each type
+sales_propn_by_type = [sales_A, sales_B, sales_C] / sales_all
+print(sales_propn_by_type)
+
+
+#==>NOW USING {.GROUBY()}:
+# Group by type; calc total weekly sales
+sales_by_type = sales.groupby("type")["weekly_sales"].agg(sum)
+
+# Get proportion for each type
+sales_propn_by_type = sales_by_type / sum(sales_by_type)
+print(sales_propn_by_type)
+
+
+
+====== PIVOT TABLES:
+--pivot tables:
+
+dogs.pivot_table(values="weight_kg", index="color")
+w/ agg function: dogs.pivot_table(values="weight_kg", index="color" aggfunc="median")
+/or/ dogs.pivot_table(values="weight_kg", index="color" aggfunc=["mean", "median"])
+
+for 2 variables:
+dogs.pivot_table(values="weight_kg", index="color", columns="breed") 
+-*-> to get rid of NaN, we add [...]( ,fill_value=0)
+-*-> to get the "mean" add [...]( ,margins=True)
+
+
+
+--- EXPLICIT INDEXES:
+
+->set a column as an index:
+dogs_ind = dogs.set_index("name") ==== (multi)=> dogs_ind = dogs.set_index(["name", "breed"])
+->to undo: dogs_ind.reset_index()
+->to drop that index: dogs_ind.reset_index(drop=True)
+
+->for simpler subsetting:
+instead of: dogs[dogs["name"].isin(["bella","stella"])
+you can write: dogs_ind.loc[["bella","stella"]]
+
+->a sample of code of sorting per indexes:
+# Sort temperatures_ind by index values
+print(temperatures_ind.sort_index())
+
+# Sort temperatures_ind by index values at the city level
+print(temperatures_ind.sort_index(level="city"))
+
+# Sort temperatures_ind by country then descending city
+print(temperatures_ind.sort_index(level=["country", "city"], ascending=[True, False]))
+
+
+--- SLICING AND SUBSETTING WITH .LOC AND ILOC:
+
+dogs_srt.loc["chow chow":"poodle"] ==> poodle also included  in the slicing!!
+exemple of all:
+# Sort the index of temperatures_ind
+temperatures_srt = temperatures_ind.sort_index()
+
+# Subset rows from Pakistan to Philippines
+print(temperatures_srt.loc["Pakistan":"Philippines"])
+
+# Try to subset rows from Lahore to Manila
+print(temperatures_srt.loc["Lahore":"Manila"])
+
+# Subset rows from Pakistan, Lahore to Philippines, Manila
+print(temperatures_srt.loc[("Pakistan","Lahore"):("Philippines","Manila")])
+
+-AND ALSO THIS:
+# Subset rows from India, Hyderabad to Iraq, Baghdad
+print(temperatures_srt.loc[("India","Hyderabad"):("Iraq","Baghdad")])
+
+# Subset columns from date to avg_temp_c
+print(temperatures_srt.loc[:, "date":"avg_temp_c"])
+
+# Subset in both directions at once
+print(temperatures_srt.loc[("India", "Hyderabad"):("Iraq", "Baghdad"), "date":"avg_temp_c"])
+
+--ANITHER EXEMPLE OF SLICING:
+# Subset for Egypt to India
+temp_by_country_city_vs_year.loc["Egypt":"India"]
+
+# Subset for Egypt, Cairo to India, Delhi
+temp_by_country_city_vs_year.loc[("Egypt", "Cairo"): ("India", "Delhi")]
+
+# Subset for Egypt, Cairo to India, Delhi, and 2005 to 2010
+temp_by_country_city_vs_year.loc[("Egypt", "Cairo"): ("India", "Delhi"), "2005":"2010"]
+
+--MORE CODE AAAAAH:
+# Set date as the index and sort the index
+temperatures_ind = temperatures.set_index("date").sort_index()
+
+# Use .loc[] to subset temperatures_ind for rows in 2010 and 2011
+print(temperatures_ind.loc["2010":"2011"])
+
+# Use .loc[] to subset temperatures_ind for rows from Aug 2010 to Feb 2011
+print(temperatures_ind.loc["2010-08-01":"2011-02-28"])
+
+
+--- .ILOC():
+Small exemple of slicing via iloc()
+# Get 23rd row, 2nd column (index 22, 1)
+print(temperatures.iloc[(22,1)])
+
+# Use slicing to get the first 5 rows
+print(temperatures.iloc[:5])
+
+# Use slicing to get columns 3 to 4
+print(temperatures.iloc[:, 2:4])
+
+# Use slicing in both directions at once
+print(temperatures.iloc[:5, 2:4])
+
+--- MORE PIVOT TABLES:
+
+dogs_height_by_breed_vs_color.mean(axis="index")  #axis argument
+dogs_height_by_breed_vs_color.mean(axis="columns")  #axis argument for columns
+
+exemple of pivoting from a Dataframe:
+# Add a year column to temperatures
+temperatures["year"] = temperatures["date"].dt.year 
+
+# Pivot avg_temp_c by country and city vs year
+temp_by_country_city_vs_year = temperatures.pivot_table("avg_temp_c", index=["country", "city"], columns="year")
+
+# See the result
+print(temp_by_country_city_vs_year)
+
+
+--exemple of pivotn uasing min() and max():
+# Get the worldwide mean temp by year
+mean_temp_by_year = temp_by_country_city_vs_year.mean(axis="index")
+
+# Filter for the year that had the highest mean temp
+print(mean_temp_by_year[mean_temp_by_year == mean_temp_by_year.max()])
+
+# Get the mean temp by city
+mean_temp_by_city = temp_by_country_city_vs_year.mean(axis="columns")
+
+# Filter for the city that had the lowest mean temp
+print(mean_temp_by_city[mean_temp_by_city == mean_temp_by_city.min()])
+
+
+
+
+
+
+=======VISUALIZING YOUR DATA:
+
+recall about diagrams on pyplot lib, hist, plot, line too?? yea stuff
+
+***bar plots:
+avr_weight_by_breed.plot(kind="bar")
+plt.show()
+## same attribtutes can be used like title, xlabel, ylabel, etc..
+
+***bar plots:
+dog_pack.plot(x="height_cm", y="weight_kg", kind="scatter")
+plt.show()
+
+***double historgrams with a legend
+dog_pack[dog_pack["sex"] == "M"]["heihg_cm"].hist()
+dog_pack[dog_pack["sex"] == "F"]["heihg_cm"].hist()
+plt.legend(["F", "M"])
+plt.show()
+
+##quick note: hist(alpha =0.7)  => set opacity to 0.7
+
+
+=== AVOCADO EXEMPLE:
+# Import matplotlib.pyplot with alias plt
+import matplotlib.pyplot as plt
+
+# Look at the first few rows of data
+print(avocados.head())
+
+# Get the total number of avocados sold of each size
+nb_sold_by_size = avocados.groupby("size")["nb_sold"].sum()
+
+# Create a bar plot of the number of avocados sold by size
+nb_sold_by_size.plot(kind="bar")
+
+# Show the plot
+plt.show()
+
+==== AVOCADO LINE EXEMPLE:
+# Import matplotlib.pyplot with alias plt
+import matplotlib.pyplot as plt
+
+# Get the total number of avocados sold on each date
+nb_sold_by_date = avocados.groupby("date")["nb_sold"].sum()
+
+# Create a line plot of the number of avocados sold by date
+nb_sold_by_date.plot(kind="line")
+
+# Show the plot
+plt.show()
+
+
+==== MORE AVOCADOOO !!
+# Modify bins to 20
+avocados[avocados["type"] == "conventional"]["avg_price"].hist(alpha=0.5, bins = 20)
+
+# Modify bins to 20
+avocados[avocados["type"] == "organic"]["avg_price"].hist(alpha=0.5, bins = 20)
+
+# Add a legend
+plt.legend(["conventional", "organic"])
+
+# Show the plot
+plt.show()
+
+
+
+
+
+--- MISING VALUES:
+# Import matplotlib.pyplot with alias plt
+import matplotlib.pyplot as plt
+
+# Check individual values for missing values
+print(avocados_2016.isna())
+
+# Check each column for missing values
+print(avocados_2016.isna().any())
+
+# Bar plot of missing values by variable
+avocados_2016.isna().sum().plot(kind = "bar")
+
+# Show plot
+plt.show()
+
+--- and also:
+# Remove rows with missing values
+avocados_complete = avocados_2016.dropna()
+
+# Check if any columns contain missing values
+print(avocados_complete.isna().any())
+
+# From previous step
+cols_with_missing = ["small_sold", "large_sold", "xl_sold"]
+avocados_2016[cols_with_missing].hist()
+plt.show()
+
+# Fill in missing values with 0
+avocados_filled = avocados_2016.fillna(0)
+
+# Create histograms of the filled columns
+avocados_filled[cols_with_missing].hist()
+
+# Show the plot
+plt.show()
+
+=== save aas a csv:
+# Create airline_totals_sorted
+airline_totals_sorted = airline_totals.sort_values("bumps_per_10k", ascending=False)
+
+# Print airline_totals_sorted
+print(airline_totals_sorted)
+
+# Save as airline_totals_sorted.csv
+airline_totals_sorted.to_csv("airline_totals_sorted.csv")

@@ -1,0 +1,55 @@
+=============theory course: undertsanding ai:
+*video 1:
+1950, first year of thought abouta  inteligent machine
+Alan Turing (mathematician)
+
+-some limits:
+true AGI dont exist yet (artifical general inteligence) ex: ai surpass humans in everything, fully sentient robot per say
+we only have ANi (artificial anrrow inteligence) ex: GPT, self driving cars
+
+
+*video2:
+machien learning helps in:
+-prediction
+-inferences
+it also uses (pattern recognition) and exceed in (problem solving)
+generative ai uses previous data to generate new ones like text, image, music etc..
+another key ai element is (automation)
+
+ai chatbots can struglle with:
+-social nuance
+-emotional inteligence
+-empathy
+-also difficulties handling new and unfamilliar situations
+
+"AI IS ONLY GOOD AS THE DATA IT LEARNS FROM"
+
+Which AI capability is most essential for a system that helps a delivery company find the fastest routes for their drivers?
+!-> optimization
+
+
+*video 3:
+
+deep learning is more of an advanced machine learnign where the ai:
+-uses neural networks to tackle big challenges
+-recognize images
+-play games
+
+to help ai undersatnd problem and amke smart decision it needs to learn:
+-knowledge representation
+-reasoning
+
+->NLP: enables ai to understand and generate human languages, texts and speeches
+
+
+
+================================================================================================================================================================================================================================================================
+
+==>Algorithms and AI systems demystified:
+
+
+how ai collect data (data acquisition)
+-NLP and audio: capturing speech, sounds.
+-computer Vision: stellite images, fingerprints, etc.
+-Robotics and sensors: temraptures, touch, motion, gravity, etc.
+

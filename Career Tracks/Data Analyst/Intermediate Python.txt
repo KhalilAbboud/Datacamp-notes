@@ -1,0 +1,271 @@
+**INTERMEDIATE PYTHON
+--dictionaries part 1:
+
+exemple:
+world = {"Morocco":34.66,"albania":2.77,"algeria":39.21}
+
+world["albania"] ==> 2.77
+add:  world["tunisia"] = '23.44'
+modify:  world["albania"] = '2.87'
+delete:
+del(world["tunisia"])
+
+----------------------------------
+a sample to understand:
+# Dictionary of dictionaries
+europe = { 'spain': { 'capital':'madrid', 'population':46.77 },
+           'france': { 'capital':'paris', 'population':66.03 },
+           'germany': { 'capital':'berlin', 'population':80.62 },
+           'norway': { 'capital':'oslo', 'population':5.084 } }
+
+
+# Print out the capital of France
+print(europe['france']['capital'])
+
+# Create sub-dictionary data
+data = {'capital':'rome', 'population':59.83 }
+
+# Add data to europe under key 'italy'
+europe['italy'] = data
+
+# Print europe
+print(europe)
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+--Pandas part 1:
+
+import pandas as pd
+brics = pd.DataFrame(dict)
+
+# dict is a dictionary of a datasets we seted in a code earlier, for exmple:
+eu_table = pd.DataFrame(europe)
+
+# setting indexes for tha pandable
+eu_table.index = ["SP", "FR", "GE", "NO:]
+eu_table  # to print or ue print()
+
+# case of importing from a '.csv' file
+eu_table = pd.read_csv["path/to/eu.csv", index_col = 0]
+eu_table
+
+--Pandas part 2: 
+
+accessing a column:
+eu_table["country"] #==> oly print the column of the countires & nothing else
+eu_table[["country"]] #==> print the country column with its title
+eu_table[["country","capital"]] #==> print two column with their title
+
+printing from top to bottom:
+eu_table[1:4] # index start at zero
+
+!! Row acess with loc:
+
+eu_table.loc["spain"] #==> prints all info about spain
+eu_table.loc[["spain"]] #==> same as above but as a Dataframe type (this is 1)
+->multiple selectons ?
+eu_table.loc[["spain","germany","austria"]] #==> multiple selection (this is 2)
+-> what about specific columns?
+eu_table.loc[["spain","germany"],["capital","population"]] #==> print specific column to print as a Dataframe
+->or all rows but specific columns?
+eu_table.loc[:,["capital","population"]] #==> all rows but only 2 columns // vis versa if flipped altought better use (1)
+
+
+==[ for the funtion iloc() ]==
+
+eu_table.iloc[[1]] #==> it prints spain and all info on the row same as (1) w/ loc()
+eu_table.iloc[[1,2,3]] #==> same as (2)
+
+so the concept is simple [loc()] uses naming based on the DAtaframe and [iloc()] uses indexes of the Dataframe
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+--Comparison Operators:
+>, >=, <, <=, ==, !=
+
+--Boolean Operators:
+and, or, not
+
+--Boolean Operators for Numpy arrays:
+np.logical_and().
+np.logiacl_or().
+
+if, elif, else (obvious duh)
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+--filtering pandas Dataframes:
+
+->datacamp example:
+brics["area"]
+is_huge = brics["area"] > 8
+brics[is_huge] 
+#==> this sequence filters the countries that have area over 8 and print them as a Dataframe instead of a boolean column
+this one is quicker:  brics[brics["area"] > 8]
+ 
+->also numpy logical function works on pandas dataframe:
+exemple:
+np.logical_and(brics["area"] > 8, brics["area"] < 10)
+-----> for subsetting at last we do: brics[np.logical_and(brics["area"] > 8, brics["area"] < 10)]
+
+
+2-exemple:
+# Import cars data
+import pandas as pd
+cars = pd.read_csv('cars.csv', index_col = 0)
+
+# Create car_maniac: observations that have a cars_per_cap over 500
+cpc = cars["cars_per_cap"]
+many_cars = cpc > 500
+car_maniac = cars[many_cars] # very important step (dataframe subset)
+
+# Print car_maniac
+print(car_maniac)
+
+====> prints all the countries with cpc over than 500
+
+--Loops:
+
+*while condition:
+	exec
+
+*for ccondition:
+	exec
+
+ther is 2 types of foor loop:
+1- for area in areas
+2- for index, area in enumerate(areas):
+
+
+exemple of for loop for a list:
+# house list of lists
+house = [["hallway", 11.25], 
+         ["kitchen", 18.0], 
+         ["living room", 20.0], 
+         ["bedroom", 10.75], 
+         ["bathroom", 9.50]]
+         
+# Build a for loop from scratch
+for room in house :
+    print("the " + room[0] + " is " + str(room[1]) + " sqm")
+
+QN!! : str(value)  ==> convert to string 
+
+
+--Loop Data Structeres part 1:
+
+->for a dictionary:
+exemple:
+
+world = {...}
+for key, value in world.items() :
+	print(key + "blablabla" + str(value))
+
+
+->for a 2D numpy array:
+
+meas = np.array([np_height, np_weight])
+for val in np.nditer(meas) : 
+	print(val)
+
+
+--Loop Data Structeres part 2:
+->pandas dataframe:
+
+(brics exemple)
+
+import pandas as pd
+brics = pd.read_csv("brics.csv", index_col = 0)
+for lab, row in brics.iterrows():
+	print(lab)
+	print(row)
+
+
+->for selective print:
+[..] 
+[..]
+for lab, row in brics.iterrows():
+	print(lab = ":" + row["capital"])  #==> only prints the label and the capital row
+
+
+->for adding a column "tricky!!"
+[..]
+[..]
+for lab, row in brics.iterrows():
+	#-creating series on every iteration
+	brics.loc[lab, "name_length"] = len(row["country"])
+print(brics)  #==> shows all original columns and the new added "name_length" column
+
+
+a better approach "apply method"
+[..]
+[..]
+brics["name length"] = brics["country"].apply(len) #==> len a string calculating function wewewewe
+print(brics)
+
+another two exemples:
+1)
+# Import cars data
+import pandas as pd
+cars = pd.read_csv('cars.csv', index_col = 0)
+
+# adding new column using for loop
+for lab, row in cars.iterrows():
+	cars.loc[lab, "COUNTRY"] = row["country"].upper()
+2)
+# Import cars data
+import pandas as pd
+cars = pd.read_csv('cars.csv', index_col = 0)
+
+# Use .apply(str.upper)
+cars["COUNTRY"] = cars["country"].apply(str.upper)
+print(cars)
+
+
+--- Random numbers:
+
+import numpy as np
+np.random.rand()
+
+#for a coin flip exemple:
+np.random.seed(420)
+coin = np.random.randint(0,2) # 0 or 1
+print(coin)
+
+
+--- Distribution:
+
+exemple:
+# NumPy is imported; seed is set
+
+# Initialize all_walks (don't change this line)
+all_walks = []
+
+# Simulate random walk five times
+for i in range(5) :
+
+    # Code from before
+    random_walk = [0]
+    for x in range(100) :
+        step = random_walk[-1]
+        dice = np.random.randint(1,7)
+
+        if dice <= 2:
+            step = max(0, step - 1)
+        elif dice <= 5:
+            step = step + 1
+        else:
+            step = step + np.random.randint(1,7)
+        random_walk.append(step)
+
+    # Append random_walk to all_walks
+    all_walks.append(random_walk)
+
+# Print all_walks
+print(all_walks)
