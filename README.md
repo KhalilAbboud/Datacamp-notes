@@ -1,6 +1,6 @@
 # 📘 DataCamp Notes
-## still under construction
-ohoy to me **DataCamp Learning Notes** repo
+
+"oi ya to me **DataCamp Learning Notes** repo"
 Here I just write anything i learned across all i learned in DC like Python, python and, idk, more python, ai too, etc..
 
 This repo is meant to be:
