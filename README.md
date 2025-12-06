@@ -15,11 +15,10 @@ This repo is meant to be:
 
 ### 🔵 Python
 - introduction to python
+- introduction to Object-Oriented Programming with python
+- introdution to python for Developers
 - intermediate python
 - Data manipulations with panda
-
-### 🟠 SQL
-- introduction to sql
 
 ### 🧩 Mini Projects
 - Investigating Netflix Movies
