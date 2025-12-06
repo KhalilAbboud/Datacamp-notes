@@ -1,0 +1,55 @@
+======= UNDERSTANDING MACHINE LEARNING =======
+exo1:
+-the model output represent the top movies with the highest proba of matching the selected taste
+exo2:
+-Machine learning methods can be considered AI methods -> TRUE
+-AI and data science share the same goal, but AI uses methods from computer science and data science uses methods from statistics. -> FALSE
+-Machine learning has become the most prominent subset of AI. -> TRUE
+-Machine learning is used in data science to make predictions. ->TRUE
+
+**qn from vid:
+There are three types of machine learning. 
+The first listed, reinforcement learning, is used for deciding sequential actions, like a robot deciding its path or its next move in a chess game. 
+Reinforcement learning is not as common as the others and uses complex mathematics, like game theory. 
+It won't be covered any further. The most common types are supervised and unsupervised learning. 
+Their main difference lies in their training data
+
+**Tasks ordered:
+extract features
+split the datasets -> (train, test)
+train model using training dataset
+evaluate the results with the testing dataset
+
+*Supervised Learning
+Learning from labeled data. The model is given inputs and the correct outputs, so it learns to predict the right answer.
+
+*Unsupervised Learning
+Learning from unlabeled data. The model tries to find patterns, groups, or structure on its own without being told the correct answers.
+
+flavors of supervised learnig: classification and reggression (more down)
+==> *Regression: (numbers)
+Predicts a continuous value (numbers that can vary on a scale).
+Example: predicting house price, temperature, or someone’s height.
+
+    *Classification: (categories)
+Predicts a category/class from a set of labels.
+Example: spam vs not spam, cat vs dog, disease type, etc.
+
+=======DEEP LEARNING=======:
+
+Deep Learning def:
+A branch of machine learning that uses multi-layered artificial neural networks to learn complex patterns from large amounts of data.
+It’s especially powerful for things like image recognition, speech recognition, natural language processing, and big-data tasks.
+
+what happens indside a neural network in order !:
+The car images are transformed to numbers
+The pixel intensities are fed into a neural network
+Neurons will learn to detect edges
+Neurons will learn to detect more complex objects like wheels, doors, and windows
+Neurons will learn to detect shapes of vehicles
+The image is classified as a car or a truck
+
+whats an nlp?
+Natural Language Processing (its like ai trying to be human hmmmm)
+A field of artificial intelligence that focuses on enabling computers to understand, interpret, and generate human language.
+
